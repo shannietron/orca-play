@@ -2,11 +2,12 @@ import { nanoid } from 'https://unpkg.com/nanoid@4.0.2/nanoid.js'
 import 'https://unpkg.com/@supabase/supabase-js@2'
 
 export default function Share () {
+    console.log('Share loaded');
     // Create a single supabase client for interacting with your database
     const { createClient } = supabase
     const supabaseDB = createClient(
-        'https://qfxcjflnheydozqmuodf.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmeGNqZmxuaGV5ZG96cW11b2RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzk4NTM1MTMsImV4cCI6MTk5NTQyOTUxM30.aSwuGJJXod9BZVXYSTLvxrzU5puuHXGpFI_07XXsvy8',
+        'https://mmtwvclhickzbiefqlko.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tdHd2Y2xoaWNremJpZWZxbGtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQwODg5ODEsImV4cCI6MjAzOTY2NDk4MX0.ttZiuWWH8cHYDQ1k_qexQaI0NMwDRKLVuJoZF1xR1U8',
     );
     this.initCode = async () => {
         try {
@@ -36,22 +37,35 @@ export default function Share () {
         }         
     }
     this.handleShare = async (codeToShare) => {
-        // generate uuid in the browser
         const hash = nanoid(12);
         const shareUrl = window.location.origin + window.location.pathname + '?' + hash;
         const { data, error } = await supabaseDB.from('code').insert([{ code: codeToShare, hash }]);
         if (!error) {
-          // copy shareUrl to clipboard
-          await navigator.clipboard.writeText(shareUrl);
-          const message = `Link copied to clipboard: ${shareUrl}`;
-          alert(message);
-          // alert(message);
-          console.log(message);
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(shareUrl);
+                } else {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = shareUrl;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                }
+                const message = `Link copied to clipboard: ${shareUrl}`;
+                alert(message);
+                console.log(message);
+            } catch (err) {
+                const message = `Failed to copy: ${err.message}`;
+                alert(message);
+                console.log(message);
+            }
         } else {
-          console.log('error', error);
-          const message = `Error: ${error.message}`;
-          // alert(message);
-          console.log(message);
+            const message = `Error: ${error.message}`;
+            alert(message);
+            console.log(message);
         }
     };
 }

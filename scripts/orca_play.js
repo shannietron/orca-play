@@ -126,7 +126,7 @@ function OrcaPlay () {
     this.orcaClient.acels.set('View', 'Toggle Guide', 'CmdOrCtrl+G', () => { this.toggleGuide() })      
     this.orcaClient.acels.set('View', 'Hide Pilot', 'CmdOrCtrl+H', () => { this.hidePilot() })
     this.orcaClient.acels.set('File', 'Load Random Example', 'CmdOrCtrl+R', () => { this.randomExample() })
-    this.orcaClient.acels.set('File', 'Share Link', 'CmdOrCtrl+#', () => { this.shareLink() })
+    this.orcaClient.acels.set('File', 'Share Link', 'CmdOrCtrl+E', () => { this.shareLink() })
   }
 
   this.toggleGuide = () => {
